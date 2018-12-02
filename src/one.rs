@@ -1,15 +1,14 @@
 use std::collections::HashSet;
-use std::fs::File;
-use std::io::prelude::*;
-use std::path::Path;
+
+use super::get_int_input_vec;
 
 pub fn problem_one_part_one() -> i32 {
-    let numbers = get_input_vec();
+    let numbers = get_int_input_vec("one.txt");
     numbers.iter().sum()
 }
 
 pub fn problem_one_part_two() -> i32 {
-    let numbers = get_input_vec();
+    let numbers = get_int_input_vec("one.txt");
 
     find_first_duplicated_frequency(&numbers)
 }
@@ -41,23 +40,6 @@ fn get_resulting_frequencies(initial: i32, numbers: &[i32]) -> Vec<i32> {
             Some(*state)
         })
         .collect::<Vec<i32>>()
-}
-
-fn get_input_vec() -> Vec<i32> {
-    // This is some dumpster fire error handling
-    let file_name = "input/one.txt";
-    let path = Path::new(file_name);
-    let mut file = File::open(&path).unwrap();
-
-    let mut content = String::new();
-
-    file.read_to_string(&mut content).unwrap();
-
-    let numbers = content
-        .split_whitespace()
-        .map(|c| c.parse::<i32>().unwrap());
-
-    numbers.collect()
 }
 
 #[cfg(test)]
