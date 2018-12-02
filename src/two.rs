@@ -3,9 +3,8 @@ use super::get_input_vec;
 use std::collections::HashMap;
 
 pub fn problem_two_part_one() -> u32 {
-    let raw_input = get_input_vec("two.txt");
-    // let input = raw_input.iter().map(AsRef::as_ref).collect();
-    multiply_frequencies_of_two_and_three_duplicates(&raw_input)
+    let input = get_input_vec("two.txt");
+    multiply_frequencies_of_two_and_three_duplicates(&input)
 }
 
 fn multiply_frequencies_of_two_and_three_duplicates(input: &[String]) -> u32 {
