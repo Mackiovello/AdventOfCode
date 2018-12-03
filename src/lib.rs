@@ -3,6 +3,7 @@ use std::io::prelude::*;
 use std::path::Path;
 
 mod one;
+mod three;
 mod two;
 
 pub fn print_solutions() {
@@ -22,6 +23,10 @@ pub fn print_solutions() {
         "Solution for problem 2, part 2: {}",
         two::problem_two_part_two()
     );
+    println!(
+        "Solution for problem 3, part 1: {}",
+        three::problem_three_part_one()
+    );
 }
 
 pub fn get_input_vec(file: &str) -> Vec<String> {
@@ -34,7 +39,7 @@ pub fn get_input_vec(file: &str) -> Vec<String> {
 
     file.read_to_string(&mut content).unwrap();
 
-    content.split_whitespace().map(|s| s.to_owned()).collect()
+    content.split('\n').map(|s| s.to_owned()).collect()
 }
 
 pub fn get_int_input_vec(file: &str) -> Vec<i32> {
