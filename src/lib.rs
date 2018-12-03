@@ -27,6 +27,10 @@ pub fn print_solutions() {
         "Solution for problem 3, part 1: {}",
         three::problem_three_part_one()
     );
+    println!(
+        "Solution for problem 3, part2: {}",
+        three::problem_three_part_two()
+    );
 }
 
 pub fn get_input_vec(file: &str) -> Vec<String> {
