@@ -17,7 +17,11 @@ pub fn print_solutions() {
     println!(
         "Solution for problem 2, part 1: {}",
         two::problem_two_part_one()
-    )
+    );
+    println!(
+        "Solution for problem 2, part 2: {}",
+        two::problem_two_part_two()
+    );
 }
 
 pub fn get_input_vec(file: &str) -> Vec<String> {
