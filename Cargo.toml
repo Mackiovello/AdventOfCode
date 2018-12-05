@@ -6,3 +6,5 @@ edition = "2018"
 include = ["src/**/*", "Cargo.toml"]
 
 [dependencies]
+chrono = "0.4"
+regex = "0.1"
