@@ -4,21 +4,16 @@ use std::collections::HashMap;
 use regex::Regex;
 use chrono::Duration;
 
-
+// previous answer: 36454
+// second answer was right: 125444 
 pub fn problem_four_part_one() -> u32 {
     let input = get_input_vec("four.txt");
     let input_refs = input.iter().map(AsRef::as_ref).collect();
     let entries = parse_into_entries(input_refs);
     let guards = group_entries_by_guard(entries);
-
-    for g in guards {
-        println!("{:?}", g.id);
-    }
-
-    // let most_sleep = get_guard_with_most_sleep(guards);
-    // let most_slept_minute = most_sleep.get_most_slept_minute();
-    // most_sleep.id * most_slept_minute as u32
-    0
+    let most_sleep = get_guard_with_most_sleep(guards);
+    let most_slept_minute = most_sleep.get_most_slept_minute();
+    most_sleep.id * most_slept_minute as u32
 }
 
 #[derive(Debug, PartialEq)]
@@ -108,36 +103,25 @@ fn get_guard_with_most_sleep(guards: Vec<Guard>) -> Guard {
 }
 
 fn group_entries_by_guard(entries: Vec<Entry>) -> Vec<Guard> {
-    // Use a HashMap and a int to track the latest ID
-    let mut guards: Vec<Guard> = Vec::new();
+    let mut guards: HashMap<u32, Vec<ParsedEntry>> = HashMap::new();
+    let mut current_id = 0;
+
     let extract_id_regex = Regex::new(r"^Guard #(\d{1,})").unwrap();
 
     for entry in entries {
         if let Some(captured) = extract_id_regex.captures(&entry.action) {
             let id = captured[1].parse::<u32>().unwrap();
-            let matching_guard = guards.iter().filter(|g| g.id == id).collect::<Vec<&Guard>>();
-            if let Some(guard) = matching_guard.first() {
-                let new_entries = &guard.clone().entries;
-                guards.push(Guard {
-                    entries: new_entries.to_vec(),
-                    id: id
-                });
-            } else {
-                guards.push(Guard { 
-                    id: id,
-                    entries: vec![] 
-                });
+
+            if !guards.contains_key(&id) {
+                guards.insert(id, vec![]);
             }
+            current_id = id;
         } else {
-            guards
-                .last_mut()
-                .unwrap()
-                .entries
-                .push(ParsedEntry::from(&entry));
+            guards.get_mut(&current_id).unwrap().push(ParsedEntry::from(&entry))
         }
     };
 
-    guards
+    guards.iter().map(|e| Guard { id: *e.0, entries: e.1.to_vec() } ).collect()
 }
 
 
@@ -182,38 +166,37 @@ mod tests {
 
     #[test]
     fn converts_records_to_guards() {
-        // let records = vec![
-        //     "[1518-11-01 00:05] falls asleep",
-        //     "[1518-11-01 00:25] wakes up",
-        //     "[1518-11-01 00:30] falls asleep",
-        //     "[1518-11-01 23:58] Guard #99 begins shift",
-        //     "[1518-11-02 00:50] wakes up",
-        //     "[1518-11-03 00:05] Guard #10 begins shift",
-        //     "[1518-11-05 00:03] Guard #99 begins shift",
-        //     "[1518-11-02 00:40] falls asleep",
-        //     "[1518-11-03 00:29] wakes up",
-        //     "[1518-11-04 00:46] wakes up",
-        //     "[1518-11-01 00:55] wakes up",
-        //     "[1518-11-04 00:02] Guard #99 begins shift",
-        //     "[1518-11-04 00:36] falls asleep",
-        //     "[1518-11-01 00:00] Guard #10 begins shift",
-        //     "[1518-11-03 00:24] falls asleep",
-        //     "[1518-11-05 00:45] falls asleep",
-        //     "[1518-11-05 00:55] wakes up",
-        // ];
+        let records = vec![
+            "[1518-11-01 00:05] falls asleep",
+            "[1518-11-01 00:25] wakes up",
+            "[1518-11-01 00:30] falls asleep",
+            "[1518-11-01 23:58] Guard #99 begins shift",
+            "[1518-11-02 00:50] wakes up",
+            "[1518-11-03 00:05] Guard #10 begins shift",
+            "[1518-11-05 00:03] Guard #99 begins shift",
+            "[1518-11-02 00:40] falls asleep",
+            "[1518-11-03 00:29] wakes up",
+            "[1518-11-04 00:46] wakes up",
+            "[1518-11-01 00:55] wakes up",
+            "[1518-11-04 00:02] Guard #99 begins shift",
+            "[1518-11-04 00:36] falls asleep",
+            "[1518-11-01 00:00] Guard #10 begins shift",
+            "[1518-11-03 00:24] falls asleep",
+            "[1518-11-05 00:45] falls asleep",
+            "[1518-11-05 00:55] wakes up",
+        ];
 
-        // let entries = parse_into_entries(records); 
+        let entries = parse_into_entries(records); 
 
-        // let guards = group_entries_by_guard(entries);
+        let guards = group_entries_by_guard(entries);
 
         // let most_sleep = get_guard_with_most_sleep(guards);
 
         // let most_slept_minute = most_sleep.get_most_slept_minute();
 
         // println!("{:?}", most_sleep.id * most_slept_minute);
-        problem_four_part_one();
 
-        assert!(false);
+        // assert!(false);
 
         // for e in entries {
         //     println!("time: {:?}, action: {}", e.0, e.1);

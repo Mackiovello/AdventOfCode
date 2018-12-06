@@ -67,8 +67,8 @@ pub fn get_int_input_vec(file: &str) -> Vec<i32> {
 mod tests {
     use super::print_solutions;
 
-    // #[test]
-    // fn solutions_execute() {
-    //     print_solutions();
-    // }
+    #[test]
+    fn solutions_execute() {
+        print_solutions();
+    }
 }
