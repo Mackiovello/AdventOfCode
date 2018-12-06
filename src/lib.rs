@@ -1,3 +1,5 @@
+#![feature(vec_remove_item)]
+
 extern crate chrono;
 extern crate regex;
 
@@ -32,8 +34,12 @@ pub fn print_solutions() {
         three::problem_three_part_one()
     );
     println!(
-        "Solution for problem 3, part2: {}",
+        "Solution for problem 3, part 2: {}",
         three::problem_three_part_two()
+    );
+    println!(
+        "Solution for problem 4, part 1: {}", 
+        four::problem_four_part_one()
     );
 }
 
