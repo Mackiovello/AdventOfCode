@@ -41,6 +41,10 @@ pub fn print_solutions() {
         "Solution for problem 4, part 1: {}", 
         four::problem_four_part_one()
     );
+    println!(
+        "Solution for problem 4, part 2: {}", 
+        four::problem_four_part_two()
+    );
 }
 
 pub fn get_input_vec(file: &str) -> Vec<String> {
@@ -67,8 +71,8 @@ pub fn get_int_input_vec(file: &str) -> Vec<i32> {
 mod tests {
     use super::print_solutions;
 
-    #[test]
-    fn solutions_execute() {
-        print_solutions();
-    }
+    // #[test]
+    // fn solutions_execute() {
+    //     print_solutions();
+    // }
 }
