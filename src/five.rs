@@ -12,7 +12,7 @@ fn reduced_size(input: &str) -> usize {
     let mut result: Vec<Vec<char>> = vec![chars];
     loop {
         let last_result = result.last().unwrap();
-        let reduced = reduce(last_result.to_vec());
+        let reduced = reduce(last_result);
         if reduced.len() == last_result.len() {
             break;
         }
@@ -21,7 +21,7 @@ fn reduced_size(input: &str) -> usize {
     result.last().unwrap().len()
 }
 
-fn reduce(chars: Vec<char>) -> Vec<char> {
+fn reduce(chars: &[char]) -> Vec<char> {
     chars.iter().fold(Vec::new(), |mut a, b| {
         let last_value = a.last();
         if last_value.is_some() && (*last_value.unwrap() as i32 - *b as i32).abs() == 32 {
@@ -29,7 +29,7 @@ fn reduce(chars: Vec<char>) -> Vec<char> {
             a
         } else {
             a.push(*b);
-            a 
+            a
         }
     })
 }
