@@ -9,6 +9,16 @@ pub fn problem_seven_part_one() -> String {
     find_order(&input_refs).unwrap()
 }
 
+pub fn problem_seven_part_two() -> u32 {
+    let input = get_input_vec("seven.txt");
+    let input_refs = input.iter().map(AsRef::as_ref).collect::<Vec<_>>();
+    time_to_complete(&input_refs, 5, 60)
+}
+
+fn time_to_complete(steps: &[&str], workers: u32, base_time: u32) -> u32 {
+    0
+}
+
 fn find_order(steps: &[&str]) -> Result<String, String> {
     let parsed_steps = parse_input(steps);
     let mut order_removed: Vec<&str> = Vec::new();
@@ -120,6 +130,25 @@ fn parse_input(steps: &[&str]) -> Vec<(String, String)> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn sample_part_2() {
+        // Given
+        let input = vec![
+            "Step C must be finished before step A can begin.",
+            "Step C must be finished before step F can begin.",
+            "Step A must be finished before step B can begin.",
+            "Step A must be finished before step D can begin.",
+            "Step B must be finished before step E can begin.",
+            "Step D must be finished before step E can begin.",
+            "Step F must be finished before step E can begin.",
+        ];
+        // When
+        let result = time_to_complete(&input, 2, 0);
+
+        // Then
+        assert_eq!(15, result);
+    }
 
     #[test]
     fn ascii_code_ordering_err_on_non_one_char_strings() {
