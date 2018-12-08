@@ -10,6 +10,14 @@ pub fn problem_six_part_one() -> usize {
     calculate_largest_area(&points)
 }
 
+// 37093 - correct
+pub fn problem_six_part_two() -> usize {
+    let input = get_input_vec("six.txt");
+    let input_refs = input.iter().map(AsRef::as_ref).collect::<Vec<_>>();
+    let points = parse_input(&input_refs);
+    area_with_distance_under_n(&points, 10000)
+}
+
 fn parse_input(input: &[&str]) -> Vec<(i32, i32)> {
     input
         .iter()
@@ -21,6 +29,24 @@ fn parse_input(input: &[&str]) -> Vec<(i32, i32)> {
             (split[0], split[1])
         })
         .collect()
+}
+
+fn area_with_distance_under_n(points: &[(i32, i32)], max_distance: i32) -> usize {
+    let max_x = points.iter().max_by(|a, b| a.0.cmp(&b.0)).unwrap().0;
+    let min_x = points.iter().min_by(|a, b| a.0.cmp(&b.0)).unwrap().0;
+    let max_y = points.iter().max_by(|a, b| a.1.cmp(&b.1)).unwrap().1;
+    let min_y = points.iter().min_by(|a, b| a.1.cmp(&b.1)).unwrap().1;
+
+    let coordinates = (min_x..=max_x)
+        .map(|x| (min_y..=max_y).map(move |y| (x, y)))
+        .flatten()
+        .collect::<Vec<_>>();
+
+    coordinates
+        .iter()
+        .map(|c| points.iter().map(|p| calculate_distance(c, p)).sum::<i32>())
+        .filter(|&c| c < max_distance)
+        .count()
 }
 
 type ProximityHashMap = HashMap<(i32, i32), Vec<(i32, i32)>>;
@@ -85,25 +111,4 @@ fn find_nearest_points(coordinates: &[(i32, i32)], points: &[(i32, i32)]) -> Pro
 
 fn calculate_distance(first: &(i32, i32), second: &(i32, i32)) -> i32 {
     (first.0 - second.0).abs() + (first.1 - second.1).abs()
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    // #[test]
-    // fn sample() {
-    //     let input = vec!["1, 1", "1, 6", "8, 3", "3, 4", "5, 5", "8, 9"];
-
-    //     // Given
-    //     let parsed_input = parse_input(&input);
-
-    //     let largest_area = calculate_largest_area(parsed_input);
-    //     println!("{}", largest_area);
-
-    //     // When
-    //     assert!(false);
-
-    //     // Then
-    // }
 }

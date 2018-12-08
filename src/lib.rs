@@ -59,6 +59,10 @@ pub fn print_solutions() {
         "Solution for problem 6, part 1: {}",
         six::problem_six_part_one()
     );
+    println!(
+        "Solution for problem 6, part 2: {}",
+        six::problem_six_part_two()
+    );
 }
 
 pub fn get_input_vec(file: &str) -> Vec<String> {
