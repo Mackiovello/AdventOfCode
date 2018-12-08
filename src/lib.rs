@@ -10,6 +10,7 @@ use std::path::Path;
 mod five;
 mod four;
 mod one;
+mod seven;
 mod six;
 mod three;
 mod two;
@@ -62,6 +63,10 @@ pub fn print_solutions() {
     println!(
         "Solution for problem 6, part 2: {}",
         six::problem_six_part_two()
+    );
+    println!(
+        "Solution for problem 7, part 1: {}",
+        seven::problem_seven_part_one()
     );
 }
 
