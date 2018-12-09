@@ -68,6 +68,10 @@ pub fn print_solutions() {
         "Solution for problem 7, part 1: {}",
         seven::problem_seven_part_one()
     );
+    println!(
+        "Solution for problem 7, part 2: {}",
+        seven::problem_seven_part_two()
+    );
 }
 
 pub fn get_input_vec(file: &str) -> Vec<String> {
@@ -94,8 +98,8 @@ pub fn get_int_input_vec(file: &str) -> Vec<i32> {
 mod tests {
     use super::print_solutions;
 
-    #[test]
-    fn solutions_execute() {
-        print_solutions();
-    }
+    // #[test]
+    // fn solutions_execute() {
+    //     print_solutions();
+    // }
 }
