@@ -3,7 +3,7 @@ use super::parse_input;
 pub fn find_order(steps: &[&str]) -> Result<String, String> {
     let parsed_steps = parse_input(steps);
     let mut order_removed: Vec<&str> = Vec::new();
-    let mut removed_steps: Vec<(String, String)> = Vec::new();
+    let mut removed_steps: Vec<(&str, &str)> = Vec::new();
 
     let mut all_letters: Vec<&str> = parsed_steps
         .iter()
@@ -30,7 +30,7 @@ pub fn find_order(steps: &[&str]) -> Result<String, String> {
                         .iter()
                         .filter(|s| !removed_steps.contains(s))
                         .map(|step| &step.1)
-                        .filter(move |&x| x == letter)
+                        .filter(move |&&x| x == letter)
                         .count()
                         == 0,
                 )
