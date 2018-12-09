@@ -25,48 +25,39 @@ pub fn problem_seven_part_two() -> u32 {
 fn time_to_complete(steps: &[&str], workers: u32, base_time: u32) -> u32 {
     let parsed_steps: Vec<(&str, &str)> = parse_input(steps);
     let char_steps = to_char_steps(&parsed_steps);
-    // let constructed_steps = construct_steps(&char_steps);
-    0
-    // execute_steps(constructed_steps, workers, base_time).unwrap()
+    let constructed_steps = construct_steps(&char_steps);
+    execute_steps(constructed_steps, workers, base_time).unwrap()
 }
 
-fn order_for_steps(steps: &[&str]) -> Vec<char> {
-    find_order(steps).unwrap().chars().collect()
-}
+fn construct_steps(dependencies: &[(char, char)]) -> Vec<Step> {
+    let unique_letters = to_unique_letters(dependencies);
 
-fn construct_steps2<'a>() -> Vec<Step<'a>> {
-    let steps: Vec<Step> = vec!['A', 'B', 'C'].iter().map(|&u| Step::new(u)).collect();
-    let step: &Step = steps.clone().get(3).unwrap();
-    steps[0].add_dependency(step);
+    let steps: Vec<Step> = unique_letters.iter().map(|&u| Step::new(u)).collect();
+
+    for i in 0..steps.len() {
+        let representation = steps[i].get_representation();
+
+        let dependency_representation: Vec<char> = dependencies
+            .iter()
+            .filter(|d| d.1 == representation)
+            .map(|d| d.0)
+            .collect();
+
+        // look into refactoring with the position function
+        let mut positions = Vec::new();
+        for (i, _) in steps.iter().enumerate() {
+            if dependency_representation.contains(&steps[i].get_representation()) {
+                positions.push(i);
+            }
+        }
+
+        for dependency_index in positions {
+            steps[i].add_dependency(dependency_index);
+        }
+    }
+
     steps
 }
-// fn construct_steps(dependencies: &[(char, char)]) -> Vec<Step> {
-//     let unique_letters = to_unique_letters(dependencies);
-
-//     let steps: Vec<Step> = vec!['A', 'B', 'C'].iter().map(|&u| Step::new(u)).collect();
-
-//     for i in 0..(steps.len() - 1) {
-//         let representation = steps[i].get_representation();
-
-//         let dependency_representation: Vec<char> = dependencies
-//             .iter()
-//             .filter(|d| d.1 == representation)
-//             .map(|d| d.0)
-//             .collect();
-
-//         let dependencies: Vec<&Step> = steps
-//             .iter()
-//             .filter(|d| dependency_representation.contains(&&d.get_representation()))
-//             .collect();
-
-//         for dependency in dependencies {
-//             steps[i].add_dependency(dependency);
-//         }
-//     }
-
-//     steps
-// }
-// "Step A must be finished before step D can begin.",
 
 fn to_char_steps(steps: &[(&str, &str)]) -> Vec<(char, char)> {
     steps
@@ -99,26 +90,49 @@ fn execute_steps(steps: Vec<Step>, workers: u32, base_time: u32) -> Result<u32, 
         return Ok(steps[0].get_time_to_finish(base_time));
     }
 
-    // if steps.len() <= workers as usize && steps.iter().all(|s| s.can_be_finished()) {
-    //     return Ok(steps
-    //         .iter()
-    //         .max_by(|a, b| {
-    //             a.get_time_to_finish(base_time)
-    //                 .cmp(&b.get_time_to_finish(base_time))
-    //         })
-    //         .unwrap()
-    //         .get_time_to_finish(base_time));
-    // }
+    if steps.len() <= workers as usize
+        && steps
+            .iter()
+            .all(|s| s.can_be_finished(steps.iter().map(|s| s).collect()))
+    {
+        return Ok(steps
+            .iter()
+            .max_by(|a, b| {
+                a.get_time_to_finish(base_time)
+                    .cmp(&b.get_time_to_finish(base_time))
+            })
+            .unwrap()
+            .get_time_to_finish(base_time));
+    }
 
-    Ok(0)
-}
+    let mut time = 0;
 
-fn get_finished_steps(steps: &[Step]) -> Vec<char> {
-    steps
-        .iter()
-        .filter(|s| s.is_finished())
-        .map(|s| s.get_representation())
-        .collect()
+    loop {
+        let next: Vec<&Step> = steps
+            .iter()
+            .inspect(|s| println!("{:?}", s))
+            .filter(|s| !s.is_finished())
+            .filter(|s| s.can_be_finished(steps.iter().map(|s| s).collect()))
+            .collect();
+
+        if next.is_empty() {
+            return Ok(time);
+        }
+
+        for step in next.iter() {
+            step.finish();
+        }
+
+        time += next
+            .clone()
+            .iter()
+            .max_by(|a, b| {
+                a.get_time_to_finish(base_time)
+                    .cmp(&b.get_time_to_finish(base_time))
+            })
+            .unwrap()
+            .get_time_to_finish(base_time);
+    }
 }
 
 fn parse_input<'a>(steps: &[&'a str]) -> Vec<(&'a str, &'a str)> {
@@ -188,35 +202,34 @@ mod tests {
         assert_eq!(Ok(expected_to_finish), result);
     }
 
-    // #[test]
-    // fn two_steps_without_dependencies_return_time_for_longest_with_two_workers() {
-    //     // Given
-    //     let workers = 2;
-    //     let base_time = 60;
-    //     let steps = vec![Step::new('A'), Step::new('B')];
-    //     let expected_to_finish = steps[1].get_time_to_finish(base_time);
+    #[test]
+    fn two_steps_without_dependencies_return_time_for_longest_with_two_workers() {
+        // Given
+        let workers = 2;
+        let base_time = 60;
+        let steps = vec![Step::new('A'), Step::new('B')];
+        let expected_to_finish = steps[1].get_time_to_finish(base_time);
 
-    //     // When
-    //     let result = execute_steps(steps, workers, base_time);
+        // When
+        let result = execute_steps(steps, workers, base_time);
 
-    //     // Then
-    //     assert_eq!(Ok(expected_to_finish), result);
-    // }
+        // Then
+        assert_eq!(Ok(expected_to_finish), result);
+    }
 
     #[test]
     fn two_steps_dependent_on_eachother_returns_combined_time() {
-        // // Given
-        // let workers = 2;
-        // let base_time = 60;
-        // let step_a = Step::new('A', vec![]);
-        // let step_b = Step::new('B', vec![&step_a]);
-        // // let steps = vec![step_b, step_a];
+        // Given
+        let workers = 2;
+        let base_time = 60;
+        let input = vec![('A', 'B')];
 
-        // // When
-        // let result = execute_steps(steps, workers, base_time);
+        // When
+        let steps = construct_steps(&input);
+        let result = execute_steps(steps, workers, base_time);
 
-        // // Then
-        // assert_eq!(Ok(0), result);
+        // Then
+        assert_eq!(Ok(123), result);
     }
 
     #[test]

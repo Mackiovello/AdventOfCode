@@ -1,18 +1,18 @@
-use core::cell::RefCell;
+use core::cell::{Cell, RefCell};
 
 #[derive(Debug, Clone)]
-pub struct Step<'a> {
+pub struct Step {
     representation: char,
-    dependencies: RefCell<Vec<&'a Step<'a>>>,
-    done: bool,
+    dependencies: RefCell<Vec<usize>>,
+    done: Cell<bool>,
 }
 
-impl<'a> Step<'a> {
-    pub fn new(representation: char) -> Step<'a> {
+impl Step {
+    pub fn new(representation: char) -> Step {
         Step {
             representation,
             dependencies: RefCell::new(Vec::new()),
-            done: false,
+            done: Cell::new(false),
         }
     }
 
@@ -20,7 +20,7 @@ impl<'a> Step<'a> {
         self.representation
     }
 
-    pub fn add_dependency(&self, dependency: &'a Step<'a>) {
+    pub fn add_dependency(&self, dependency: usize) {
         self.dependencies.borrow_mut().push(dependency);
     }
 
@@ -32,16 +32,26 @@ impl<'a> Step<'a> {
         normalized_ascii_code + base_time
     }
 
-    pub fn can_be_finished(&self) -> bool {
-        self.dependencies.borrow().is_empty()
-            || self.dependencies.borrow().iter().all(|d| d.is_finished())
+    pub fn can_be_finished(&self, steps: Vec<&Step>) -> bool {
+        if self.dependencies.borrow().is_empty() {
+            return true;
+        }
+
+        let indexes = self.dependencies.borrow();
+        for i in indexes.iter() {
+            if !steps[*i].is_finished() {
+                return false;
+            }
+        }
+
+        true
     }
 
-    pub fn finish(&mut self) {
-        self.done = true
+    pub fn finish(&self) {
+        self.done.set(true)
     }
 
     pub fn is_finished(&self) -> bool {
-        self.done
+        self.done.get()
     }
 }
