@@ -10,6 +10,7 @@ mod part_one;
 mod step;
 
 // ACHOQRXSEKUGMYIWDZLNBFTJVP - correct
+// ACOQRXSEHKUGMYIZLNBWDFTJVP
 pub fn problem_seven_part_one() -> String {
     let input = get_input_vec("seven.txt");
     let input_refs = input.iter().map(AsRef::as_ref).collect::<Vec<_>>();
@@ -39,8 +40,8 @@ fn construct_steps(dependencies: &[(char, char)]) -> Vec<Step> {
 
         let dependency_representation: Vec<char> = dependencies
             .iter()
-            .filter(|d| d.1 == representation)
-            .map(|d| d.0)
+            .filter(|d| d.0 == representation)
+            .map(|d| d.1)
             .collect();
 
         // look into refactoring with the position function
@@ -80,58 +81,29 @@ fn execute_steps(steps: Vec<Step>, workers: u32, base_time: u32) -> Result<u32, 
         return Err("Can't execute steps with no workers.".to_owned());
     }
 
-    if steps.is_empty() {
-        return Ok(0);
-    }
-
-    let number_of_steps = steps.len();
-
-    if number_of_steps == 1 {
-        return Ok(steps[0].get_time_to_finish(base_time));
-    }
-
-    if steps.len() <= workers as usize
-        && steps
-            .iter()
-            .all(|s| s.can_be_finished(steps.iter().map(|s| s).collect()))
-    {
-        return Ok(steps
-            .iter()
-            .max_by(|a, b| {
-                a.get_time_to_finish(base_time)
-                    .cmp(&b.get_time_to_finish(base_time))
-            })
-            .unwrap()
-            .get_time_to_finish(base_time));
-    }
-
     let mut time = 0;
+    let mut order: Vec<char> = Vec::new();
 
     loop {
-        let next: Vec<&Step> = steps
+        let next: Option<&Step> = steps
             .iter()
-            .inspect(|s| println!("{:?}", s))
             .filter(|s| !s.is_finished())
-            .filter(|s| s.can_be_finished(steps.iter().map(|s| s).collect()))
-            .collect();
+            .filter(|s| s.can_be_finished(steps.iter().clone().map(|s| s).collect()))
+            .max_by(|a, b| {
+                (a.get_representation() as i32).cmp(&(&(b.get_representation() as i32)))
+            });
 
-        if next.is_empty() {
+        if next.is_none() {
+            order.reverse();
+            println!("{:?}", order.iter().collect::<String>());
             return Ok(time);
         }
 
-        for step in next.iter() {
-            step.finish();
-        }
+        let step = next.unwrap();
+        order.push(step.get_representation());
+        step.finish();
 
-        time += next
-            .clone()
-            .iter()
-            .max_by(|a, b| {
-                a.get_time_to_finish(base_time)
-                    .cmp(&b.get_time_to_finish(base_time))
-            })
-            .unwrap()
-            .get_time_to_finish(base_time);
+        time += step.get_time_to_finish(base_time);
     }
 }
 
