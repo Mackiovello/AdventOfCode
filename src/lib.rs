@@ -1,4 +1,5 @@
 #![feature(vec_remove_item)]
+#![feature(cell_update)]
 
 extern crate chrono;
 extern crate regex;
@@ -10,6 +11,7 @@ use std::path::Path;
 mod eight;
 mod five;
 mod four;
+mod nine;
 mod one;
 mod seven;
 mod six;
@@ -73,6 +75,10 @@ pub fn print_solutions() {
         "Solution for problem 8, part 1: {}",
         eight::problem_eight_part_one()
     );
+    println!(
+        "Solution for problem 8, part 2: {}",
+        eight::problem_eight_part_two()
+    );
 }
 
 pub fn get_input_vec(file: &str) -> Vec<String> {
@@ -99,8 +105,8 @@ pub fn get_int_input_vec(file: &str) -> Vec<i32> {
 mod tests {
     use super::print_solutions;
 
-    #[test]
-    fn solutions_execute() {
-        print_solutions();
-    }
+    // #[test]
+    // fn solutions_execute() {
+    //     print_solutions();
+    // }
 }
