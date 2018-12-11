@@ -69,10 +69,6 @@ pub fn print_solutions() {
         "Solution for problem 7, part 1: {}",
         seven::problem_seven_part_one()
     );
-    // println!(
-    //     "Solution for problem 7, part 2: {}",
-    //     seven::problem_seven_part_two()
-    // );
     println!(
         "Solution for problem 8, part 1: {}",
         eight::problem_eight_part_one()

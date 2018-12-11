@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use core::cell::{Cell, RefCell};
 
 #[derive(Debug, Clone)]
