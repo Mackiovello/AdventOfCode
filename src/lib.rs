@@ -7,6 +7,7 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
 
+mod eight;
 mod five;
 mod four;
 mod one;
@@ -68,9 +69,13 @@ pub fn print_solutions() {
         "Solution for problem 7, part 1: {}",
         seven::problem_seven_part_one()
     );
+    // println!(
+    //     "Solution for problem 7, part 2: {}",
+    //     seven::problem_seven_part_two()
+    // );
     println!(
-        "Solution for problem 7, part 2: {}",
-        seven::problem_seven_part_two()
+        "Solution for problem 8, part 1: {}",
+        eight::problem_eight_part_one()
     );
 }
 
@@ -98,8 +103,8 @@ pub fn get_int_input_vec(file: &str) -> Vec<i32> {
 mod tests {
     use super::print_solutions;
 
-    // #[test]
-    // fn solutions_execute() {
-    //     print_solutions();
-    // }
+    #[test]
+    fn solutions_execute() {
+        print_solutions();
+    }
 }
