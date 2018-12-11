@@ -12,7 +12,6 @@ mod part_one;
 mod step;
 
 // ACHOQRXSEKUGMYIWDZLNBFTJVP - correct
-// ACOQRXSEHKUGMYIZLNBWDFTJVP
 pub fn problem_seven_part_one() -> String {
     let input = get_input_vec("seven.txt");
     let input_refs = input.iter().map(AsRef::as_ref).collect::<Vec<_>>();

@@ -17,6 +17,20 @@ pub fn problem_eight_part_one() -> u32 {
     calculate_sum_of_metadata_for_node(&node)
 }
 
+// 19276 - correct
+pub fn problem_eight_part_two() -> u32 {
+    let input = get_input_vec("eight.txt");
+    let tree = input
+        .first()
+        .unwrap()
+        .split(' ')
+        .map(|s| s.parse::<u32>().unwrap())
+        .collect::<Vec<u32>>();
+
+    let node = get_node(&tree);
+    node.get_value()
+}
+
 fn calculate_sum_of_metadata_for_node(node: &Node) -> u32 {
     let metadata_sum: u32 = node.metadata.iter().sum();
     if node.child_nodes.is_empty() {
@@ -37,6 +51,20 @@ struct Node {
     length: usize,
     child_nodes: Vec<Node>,
     metadata: Vec<u32>,
+}
+
+impl Node {
+    fn get_value(&self) -> u32 {
+        if self.child_nodes.is_empty() {
+            self.metadata.iter().sum()
+        } else {
+            self.metadata
+                .iter()
+                .filter_map(|m| self.child_nodes.get((*m - 1) as usize))
+                .map(|c| c.get_value())
+                .sum()
+        }
+    }
 }
 
 fn get_node(tree: &[u32]) -> Node {
