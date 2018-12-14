@@ -18,7 +18,7 @@ pub fn problem_nine_part_one() -> u32 {
 struct MarbleGame {
     players: Players,
     marbles: Vec<Marble>,
-    circle: LinkedList<Marble>,
+    circle: Vec<Marble>,
     current_marble: u32,
 }
 
@@ -26,8 +26,8 @@ impl MarbleGame {
     fn new(number_of_players: u32, marbles: u32) -> MarbleGame {
         MarbleGame {
             players: Players::new(number_of_players),
-            marbles: (0..number_of_players).map(Marble::new).collect(),
-            circle: LinkedList::new(),
+            marbles: (0..marbles).map(Marble::new).collect(),
+            circle: Vec::new(),
             current_marble: 0,
         }
     }
@@ -74,6 +74,7 @@ impl Marble {
     }
 }
 
+// TODO: Make this into an Iter
 struct Players {
     individuals: Vec<Player>,
     current_player: Cell<usize>,
@@ -88,17 +89,19 @@ impl Players {
     }
 
     fn get_next_player(&self) -> &Player {
-        self.current_player.update(|v| v + 1);
-        &self
+        let player = &self
             .individuals
             .get(self.current_player.get())
             .unwrap_or_else(|| {
                 self.current_player.set(0);
                 &self.individuals[self.current_player.get()]
-            })
+            });
+        self.current_player.update(|v| v + 1);
+        player
     }
 }
 
+#[derive(Debug)]
 struct Player {
     id: u32,
     score: Cell<u32>,
